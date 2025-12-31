@@ -7,7 +7,8 @@
   <title>About Us & Scope - IJACM</title>
   <meta name="keywords"
     content="advanced computing, mechanical systems, engineering research, open access journal, peer reviewed, IJACM">
-  <meta name="description" content="Learn about IJACM's mission, aims and scope. We cover computational mechanics, AI in engineering, robotics, and more.">
+  <meta name="description"
+    content="Learn about IJACM's mission, aims and scope. We cover computational mechanics, AI in engineering, robotics, and more.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     /* ================= GLOBAL STYLES ================= */
@@ -250,6 +251,30 @@
 
     .scope-card:nth-child(6) {
       animation-delay: 0.6s;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .aims-hero h1 {
+        font-size: 2rem;
+      }
+
+      .objectives-list {
+        grid-template-columns: 1fr;
+      }
+
+      .scope-grid {
+        grid-template-columns: 1fr;
+        padding: 0 15px;
+      }
+
+      .scope-card {
+        padding: 20px;
+      }
+
+      .main {
+        padding: 20px 10px;
+      }
     }
   </style>
 </head>
