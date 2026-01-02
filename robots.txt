@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ijamc.com/sitemap.xml
+Sitemap: https://ijacm.com/sitemap.xml
+
