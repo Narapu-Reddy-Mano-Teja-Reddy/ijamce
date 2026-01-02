@@ -317,18 +317,25 @@
                 <a href="author-guidelines.html" target="_blank">Author Guidelines</a> before submission.
             </p>
 
-            <form id="submissionForm" enctype="multipart/form-data">
+            <form id="submissionForm" action="https://formsubmit.co/sandeep.sri335@gmail.com" method="POST"
+                enctype="multipart/form-data">
 
-                <!-- User Info (New) -->
+                <!-- Hidden Fields for FormSubmit -->
+                <input type="hidden" name="_subject" value="New Paper Submission - IJACM">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+
+                <!-- User Info -->
                 <div class="form-section">
                     <h3><i class="fas fa-user-circle"></i> Submitter Details</h3>
                     <div class="form-group">
                         <label for="submitterName"><i class="fas fa-user"></i> Full Name *</label>
-                        <input type="text" id="submitterName" required placeholder="Your Full Name">
+                        <input type="text" id="submitterName" name="name" required placeholder="Your Full Name">
                     </div>
                     <div class="form-group">
                         <label for="submitterEmail"><i class="fas fa-envelope"></i> Email Address *</label>
-                        <input type="email" id="submitterEmail" required placeholder="your.email@example.com">
+                        <input type="email" id="submitterEmail" name="email" required
+                            placeholder="your.email@example.com">
                     </div>
                 </div>
 
@@ -337,16 +344,17 @@
                     <h3><i class="fas fa-file-alt"></i> Paper Information</h3>
                     <div class="form-group">
                         <label for="paperTitle"><i class="fas fa-heading"></i> Paper Title *</label>
-                        <input type="text" id="paperTitle" required placeholder="Full title of the manuscript">
+                        <input type="text" id="paperTitle" name="paper_title" required
+                            placeholder="Full title of the manuscript">
                     </div>
                     <div class="form-group">
                         <label for="paperAbstract"><i class="fas fa-align-left"></i> Abstract *</label>
-                        <textarea id="paperAbstract" rows="5" required
+                        <textarea id="paperAbstract" name="abstract" rows="5" required
                             placeholder="Brief abstract (200-300 words)"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="paperKeywords"><i class="fas fa-tags"></i> Keywords *</label>
-                        <input type="text" id="paperKeywords" required
+                        <input type="text" id="paperKeywords" name="keywords" required
                             placeholder="Comma separated keywords (e.g., AI, Mechanics, IoT)">
                     </div>
                 </div>
@@ -356,7 +364,7 @@
                     <h3><i class="fas fa-users"></i> Authors & Affiliations</h3>
                     <div class="form-group">
                         <label for="paperAuthors"><i class="fas fa-list"></i> Author List *</label>
-                        <textarea id="paperAuthors" rows="3" required
+                        <textarea id="paperAuthors" name="authors" rows="3" required
                             placeholder="List of all authors with affiliations"></textarea>
                     </div>
                 </div>
@@ -367,10 +375,10 @@
                     <div class="form-group">
                         <label><i class="fas fa-file-pdf"></i> PDF / Word File *</label>
                         <div class="file-upload">
-                            <input type="file" id="paperFile" accept=".pdf,.doc,.docx" required>
+                            <input type="file" id="paperFile" name="attachment" accept=".pdf,.doc,.docx" required>
                             <label for="paperFile" class="file-label">
                                 <i class="fas fa-upload"></i>
-                                <span>Click to Upload File (Max 10MB)</span>
+                                <span>Click to Upload File (Max 5 MB)</span>
                             </label>
                             <div id="fileName" class="file-name"></div>
                         </div>
@@ -381,11 +389,11 @@
                 <div class="form-section">
                     <h3><i class="fas fa-check-double"></i> Declaration</h3>
                     <div class="checkbox-group">
-                        <input type="checkbox" id="decl1" required>
+                        <input type="checkbox" id="decl1" name="declaration_original" required>
                         <label for="decl1">I confirm this is original work not published elsewhere.</label>
                     </div>
                     <div class="checkbox-group">
-                        <input type="checkbox" id="decl2" required>
+                        <input type="checkbox" id="decl2" name="declaration_terms" required>
                         <label for="decl2">I agree to the <a href="plagiarism-policy.html" target="_blank">Plagiarism
                                 Policy</a> & <a href="copyright.html" target="_blank">Terms</a>.</label>
                     </div>
@@ -401,11 +409,99 @@
     <div id="footer-placeholder"></div>
     <script src="../script.js"></script>
     <script>
-        // File Input Name Display
-        document.getElementById('paperFile').addEventListener('change', function (e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : '';
-            document.getElementById('fileName').textContent = fileName ? 'Selected: ' + fileName : '';
+        // Form Submission Logic
+        document.getElementById('submissionForm').addEventListener('submit', function (e) {
+            // we do NOT prevent default here, relying on native form submission
+            // to ensure the file (multipart/form-data) is handled correctly by the browser.
+
+            // Basic HTML validation
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                this.reportValidity();
+                return;
+            }
+
+            // File Size Validation
+            const fileInput = document.getElementById('paperFile');
+            if (fileInput.files.length > 0) {
+                if (fileInput.files[0].size > 5 * 1024 * 1024) {
+                    e.preventDefault();
+                    showNotification('File is too large. Max 5MB.', 'error');
+                    return;
+                }
+            }
+
+            // Show loading state (will redirect shortly)
+            const submitBtn = document.querySelector('.submit-btn-form');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending... Do not close.';
+            // We allow the form to submit naturally to https://formsubmit.co/...
         });
+
+
+        // File Input Name Display and Validation
+        document.getElementById('paperFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (file) {
+                if (file.size > maxSize) {
+                    showNotification('File is too large. Maximum allowed size is 5 MB.', 'error');
+                    this.value = ''; // Clear input
+                    document.getElementById('fileName').textContent = '';
+                } else {
+                    document.getElementById('fileName').textContent = 'Selected: ' + file.name;
+                }
+            } else {
+                document.getElementById('fileName').textContent = '';
+            }
+        });
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#2e7d32' : '#d32f2f'};
+                color: white;
+                border-radius: 6px;
+                z-index: 10000;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                animation: slideIn 0.3s ease;
+            `;
+
+            // Icon
+            const icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
+            notification.innerHTML = `${icon} <span>${message}</span>`;
+
+            document.body.appendChild(notification);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Add animations styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 
