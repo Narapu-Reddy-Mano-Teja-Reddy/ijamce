@@ -324,6 +324,7 @@
                 <input type="hidden" name="_subject" value="New Paper Submission - IJACM">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_format" value="json">
 
                 <!-- User Info -->
                 <div class="form-section">
@@ -411,12 +412,10 @@
     <script>
         // Form Submission Logic
         document.getElementById('submissionForm').addEventListener('submit', function (e) {
-            // we do NOT prevent default here, relying on native form submission
-            // to ensure the file (multipart/form-data) is handled correctly by the browser.
+            e.preventDefault();
 
             // Basic HTML validation
             if (!this.checkValidity()) {
-                e.preventDefault();
                 this.reportValidity();
                 return;
             }
@@ -425,16 +424,48 @@
             const fileInput = document.getElementById('paperFile');
             if (fileInput.files.length > 0) {
                 if (fileInput.files[0].size > 5 * 1024 * 1024) {
-                    e.preventDefault();
                     showNotification('File is too large. Max 5MB.', 'error');
                     return;
                 }
             }
 
-            // Show loading state (will redirect shortly)
+            // Show loading state
             const submitBtn = document.querySelector('.submit-btn-form');
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending... Do not close.';
-            // We allow the form to submit naturally to https://formsubmit.co/...
+            const originalBtnContent = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending... Please wait.';
+            submitBtn.disabled = true;
+
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Success: Show Thank You Message
+                        document.querySelector('.submission-box').innerHTML = `
+                        <div style="text-align: center; padding: 40px; animation: slideIn 0.5s ease;">
+                            <i class="fas fa-check-circle" style="font-size: 4rem; color: #4caf50; margin-bottom: 20px;"></i>
+                            <h2 style="color: var(--white); margin-bottom: 15px;">Thank You!</h2>
+                            <p style="font-size: 1.2rem; color: var(--text-light); line-height: 1.6;">
+                                Thank you, your form has been submitted successfully.<br>
+                                We will contact you soon.
+                            </p>
+                        </div>
+                    `;
+                        // Optional: Scroll to the message if needed
+                        document.querySelector('.submission-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        throw new Error('Submission failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Submission failed. Please try again or contact support.', 'error');
+                    submitBtn.innerHTML = originalBtnContent;
+                    submitBtn.disabled = false;
+                });
         });
 
 
