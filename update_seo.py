@@ -5,7 +5,7 @@ from datetime import datetime
 
 # Configuration
 ROOT_DIR = r"c:\Users\tejan\Downloads\Journal Site"
-BASE_URL = "https://www.ijacm.com"  # Placeholder, should be updated by user or config
+BASE_URL = "https://ijamc.com"  # Updated to user's domain
 JOURNAL_NAME = "International Journal of Advanced Computing and Mechanical Systems"
 JOURNAL_ACRONYM = "IJACM"
 

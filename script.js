@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
           processedData = processedData.replace(/href="index.html"/g, 'href="../index.html"');
           // Fix pages links (remove pages/ prefix since we are already therein)
           processedData = processedData.replace(/href="pages\//g, 'href="');
+          // Fix sitemap link
+          processedData = processedData.replace(/href="sitemap.xml"/g, 'href="../sitemap.xml"');
         }
 
         element.innerHTML = processedData;
