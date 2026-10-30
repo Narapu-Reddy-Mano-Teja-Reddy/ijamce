@@ -10,7 +10,7 @@ This is the official website for the **International Journal of Advanced Computi
 
 ## 👨‍💻 Development Team
 
-### Core Developers
+### Core devolopers
 - **Narapureddy Mano Teja Reddy**
 - **M. Narayan Naidu**
 - **Hemanth Musirana**
